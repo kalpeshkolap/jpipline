@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    environment{
+        PATH="PATH=$PATH:$M2_HOME/bin"
+    }
+
+    stages {
+        stage('checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kalpeshkolap/samp3.git']]])
+            }
+        }
+        stage('build') {
+            steps {
+                sh "mvn clean install"
+            }
+        }
+        stage('deploy') {
+            steps {
+                sshagent(['dep-server']) {
+                    sh "scp -o StrictHostKeyChecking=no sample0.1/target/bookstore.war kal-node@192.168.71.99:/home/kal-node/Downloads/apache-tomcat/webapps"
+}
+            }
+        }
+    }
+}
