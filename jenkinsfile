@@ -39,11 +39,11 @@ pipeline {
 
                     if [[ $BRANCH_NAME == master ]];
                     then
-                        NAMESPACE="chitale"
+                        NAMESPACE="test"
                         CONTEXT="TEST"
                     elif [[ $BRANCH_NAME == release* ]];
                     then
-                        NAMESPACE="chitale"
+                        NAMESPACE="prod"
                         CONTEXT="PRD"
                     else
                         NAMESPACE=$BRANCH
