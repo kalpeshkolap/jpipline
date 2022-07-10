@@ -13,7 +13,7 @@ pipeline {
     stage('Docker Build') {
       steps {
         script {
-                sh 'docker build -t 10.1.3.114/pop-react:${BRANCH_NAME}.${BUILD_NUMBER} . '
+                sh 'docker build -t react:${BRANCH_NAME}.${BUILD_NUMBER} . '
         }
       }
     }
@@ -21,9 +21,9 @@ pipeline {
     stage ('Docker Publish') {
       steps {
         script {
-                withDockerRegistry(credentialsId: 'dockerrepocred', url: 'http://10.1.3.114/') {
-                    sh 'docker push 10.1.3.114/pop-react:${BRANCH_NAME}.${BUILD_NUMBER}'
-                    sh 'docker rmi 10.1.3.114/pop-react:${BRANCH_NAME}.${BUILD_NUMBER}'
+                withDockerRegistry(credentialsId: 'dockerrepocred', url: '$regip') {
+                    sh 'docker push react:${BRANCH_NAME}.${BUILD_NUMBER}'
+                    sh 'docker rmi react:${BRANCH_NAME}.${BUILD_NUMBER}'
               }
             }
         }
@@ -55,12 +55,12 @@ pipeline {
                     shopt -u nocasematch
                     sed -i "s/NAMESPACE/$NAMESPACE/g" namespace.yaml
                     sed -i "s/NAMESPACE/$NAMESPACE/g" secret.yaml
-                    sed -i "s/NAMESPACE/$NAMESPACE/g" chitalereactui.yaml
+                    sed -i "s/NAMESPACE/$NAMESPACE/g" reactui.yaml
                     kubectl config use-context $CONTEXT
                     kubectl apply -f namespace.yaml
                     kubectl apply -f secret.yaml
-                    kubectl apply -f chitalereactui.yaml 
-                    kubectl set image deployment/pop-react pop-react=10.1.3.114/pop-react:${BRANCH_NAME}.${BUILD_NUMBER} -n ${BRANCH_NAME} --record=true'''
+                    kubectl apply -f reactui.yaml 
+                    kubectl set image deployment/react react=react:${BRANCH_NAME}.${BUILD_NUMBER} -n ${BRANCH_NAME} --record=true'''
           
           }
         }
